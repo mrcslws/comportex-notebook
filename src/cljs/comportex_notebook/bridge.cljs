@@ -38,6 +38,8 @@
         viz-options (atom viz/default-viz-options)
         into-viz (chan)
         from-viz nil]
-    (reagent/render [viz/viz-canvas {} model-steps selection viz-options
+    (reagent/render [viz/viz-canvas {:tabIndex 0} model-steps selection viz-options
                      into-viz from-viz]
-                    el)))
+                    el)
+    (when (not-empty @model-steps)
+      (put! into-viz [:on-model-changed (first @model-steps)]))))

@@ -15,6 +15,7 @@
             [org.nfrac.comportex.repl]
             [comportex-notebook.render :as r])
   (:use [clojure.pprint]))
+(org.nfrac.comportex.repl/truncate-large-data-structures)
 ;; @@
 ;; =>
 ;;; {"type":"html","content":"<span class='clj-nil'>nil</span>","value":"nil"}
@@ -29,31 +30,8 @@
 ;; <=
 
 ;; @@
-(org.nfrac.comportex.repl/truncate-large-data-structures)
-;; @@
-;; =>
-;;; {"type":"html","content":"<span class='clj-nil'>nil</span>","value":"nil"}
-;; <=
-
-;; @@
 (def model (demo/n-region-model 2))
-;; @@
-;; =>
-;;; {"type":"html","content":"<span class='clj-var'>#&#x27;comportex.notebook/model</span>","value":"#'comportex.notebook/model"}
-;; <=
-
-;; @@
-model
-;; @@
-
-;; @@
 (def the-inputs (iterate demo/input-transform demo/initial-input-val))
-;; @@
-;; =>
-;;; {"type":"html","content":"<span class='clj-var'>#&#x27;comportex.notebook/the-inputs</span>","value":"#'comportex.notebook/the-inputs"}
-;; <=
-
-;; @@
 (def simulation
   (reductions p/htm-step model the-inputs))
 ;; @@
@@ -62,16 +40,7 @@ model
 ;; <=
 
 ;; @@
-(def model-t1 (nth simulation 1))
-;; @@
-;; =>
-;;; {"type":"html","content":"<span class='clj-var'>#&#x27;comportex.notebook/model-t1</span>","value":"#'comportex.notebook/model-t1"}
-;; <=
-
-;; @@
-model-t1
-;; @@
-
-;; @@
-(r/viz [model model-t1])
+(->> simulation
+     (take 3)
+     r/viz)
 ;; @@
