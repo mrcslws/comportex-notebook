@@ -2,21 +2,26 @@
 
 ## Usage
 
+Clone https://github.com/mrcslws/gorilla-repl.git
+Use the "numenta2015" branch.
+"lein install"
+
 Install comportex.
 Install comportexviz.
 
 "lein cljsbuild once"
 (or "lein cljsbuild auto")
 
-"lein gorilla"
+"lein repl"
+
+In the REPL:
+(start-server)
 
 Open the worksheet. Use URL "/worksheet.html?filename=worksheet.clj"
 
 Start evaluating rows.
 
-Evaluating "model" will fail on the first try. It will work on the second.
-
-Past that, I'm not sure yet :)
+When you evaluate "model", magic will happen.
 
 ## License
 

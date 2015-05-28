@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.7.0-beta2"]
                  [org.nfrac/comportex "0.0.9-SNAPSHOT"]
                  [com.cognitect/transit-clj "0.8.271"]
+                 [gorilla-repl/gorilla-repl "0.3.5-MARCUS"]
 
                  [org.clojure/clojurescript "0.0-3291"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
@@ -15,6 +16,8 @@
 
   :source-paths ["src/clj"]
   :resource-paths ["resources" "target/resources"]
+
+  :repl-options {:init-ns comportex-notebook.core}
 
   :cljsbuild {:builds [{:source-paths ["src/cljs"]
                         :compiler {:output-dir "target/resources/public"
