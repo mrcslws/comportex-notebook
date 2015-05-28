@@ -35,7 +35,11 @@
                          (mapv viz/init-caches)
                          atom)
         selection (atom viz/blank-selection)
-        viz-options (atom viz/default-viz-options)
+        viz-options (atom
+                     (cond-> viz/default-viz-options
+                             (= 1 (count @model-steps)) (assoc-in
+                                                         [:drawing :display-mode]
+                                                         :two-d)))
         into-viz (chan)
         from-viz nil]
     (reagent/render [viz/viz-canvas {:tabIndex 0} model-steps selection viz-options

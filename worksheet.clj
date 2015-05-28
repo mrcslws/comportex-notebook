@@ -40,6 +40,10 @@
 ;; <=
 
 ;; @@
+(nth simulation 2)
+;; @@
+
+;; @@
 (->> simulation
      (take 3)
      r/viz)
