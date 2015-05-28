@@ -27,15 +27,17 @@
    "org.nfrac.comportex.synapses.CellSegmentsSynapseGraph" map->CellSegmentsSynapseGraph
    "org.nfrac.comportex.synapses.SynapseGraph" map->SynapseGraph})
 
-(defn ^:export add-viz [el serialized-model]
+(defn ^:export add-viz [el serialized-models]
   (let [reader (transit/reader :json {:handlers handlers})
-        model (transit/read reader serialized-model)
-        model-steps (atom [(viz/init-caches model)])
+        models (transit/read reader serialized-models)
+        model-steps (->> models
+                         reverse
+                         (mapv viz/init-caches)
+                         atom)
         selection (atom viz/blank-selection)
         viz-options (atom viz/default-viz-options)
         into-viz (chan)
         from-viz nil]
-    (set! (.-innerHTML el) "Injected from cljs!")
     (reagent/render [viz/viz-canvas {} model-steps selection viz-options
                      into-viz from-viz]
                     el)))

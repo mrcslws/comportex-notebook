@@ -9,12 +9,11 @@
 ;; @@
 (ns comportex.notebook
   (:require [gorilla-plot.core :as plot]
-            [gorilla-renderable.core :as renderable]
             [org.nfrac.comportex.demos.directional-steps-1d :as demo]
             [org.nfrac.comportex.core :as core]
             [org.nfrac.comportex.protocols :as p]
             [org.nfrac.comportex.repl]
-            [comportex-notebook.core])
+            [comportex-notebook.render :as r])
   (:use [clojure.pprint]))
 ;; @@
 ;; =>
@@ -22,8 +21,8 @@
 ;; <=
 
 ;; @@
-;; Reload my code
-(require 'comportex-notebook.core :reload)
+;; For debugging. Reload code.
+(require 'comportex-notebook.render :reload)
 ;; @@
 ;; =>
 ;;; {"type":"html","content":"<span class='clj-nil'>nil</span>","value":"nil"}
@@ -71,4 +70,8 @@ model
 
 ;; @@
 model-t1
+;; @@
+
+;; @@
+(r/viz [model model-t1])
 ;; @@
