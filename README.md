@@ -8,6 +8,7 @@ Use the "numenta2015" branch.
 
 Install comportex.
 Install comportexviz.
+(both via clone + "lein install")
 
 "lein cljsbuild once"
 (or "lein cljsbuild auto")
@@ -17,11 +18,9 @@ Install comportexviz.
 In the REPL:
 (start-server)
 
-Open the worksheet. Use URL "/worksheet.html?filename=worksheet.clj"
+Open the worksheet. Use URL "/worksheet.html?filename=ws/hackathon-start.clj"
 
-Start evaluating rows.
-
-When you evaluate "model", magic will happen.
+Start evaluating rows by pressing [shift] + [enter]
 
 ## License
 

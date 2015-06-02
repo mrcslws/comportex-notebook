@@ -1,7 +1,7 @@
 (ns comportex-notebook.core
   (:require [gorilla-repl.core :as g]))
 
-(defn start-server [& opts]
+(defn run [& opts]
   (let [{:keys [port ip nrepl-port gorilla-options]} (apply hash-map opts)
         port (or port 0)
         ip (or ip "127.0.0.1")

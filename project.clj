@@ -4,6 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0-beta2"]
+                 [org.clojure/data.csv "0.1.2"]
                  [org.nfrac/comportex "0.0.9-SNAPSHOT"]
                  [com.cognitect/transit-clj "0.8.271"]
                  [gorilla-repl/gorilla-repl "0.3.5-MARCUS"]
@@ -12,7 +13,10 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [comportexviz "0.0.9-SNAPSHOT"]
                  [com.cognitect/transit-cljs "0.8.215"]
-                 [reagent "0.5.0"]]
+                 [reagent "0.5.0"]
+
+                 [clj-time "0.9.0"]
+                 [com.andrewmcveigh/cljs-time "0.3.5"]]
 
   :source-paths ["src/clj"]
   :resource-paths ["resources" "target/resources"]
@@ -26,4 +30,6 @@
                                    :optimizations :whitespace}}]}
 
   :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-3211"]]
-                   :plugins [[lein-cljsbuild "1.0.5"]]}})
+                   :plugins [[lein-cljsbuild "1.0.5"]]}}
+
+  :jvm-opts ["-Xmx4G"])
