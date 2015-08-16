@@ -1,5 +1,13 @@
 # comportex-notebook
 
+**Comportex Notebook is now part of [ComportexViz](https://github.com/nupic-community/comportexviz).**
+
+This `comportex-notebook` repo is no longer relevant, though I'm still accepting stars.
+
+# OLD STUFF
+
+**I made some breaking changes to ComportexViz and this now broken.** I'm now building the next version. You can sync ComportexViz back a couple months if you want to use this now, but I recommend waiting.
+
 ## Usage
 
 Clone https://github.com/mrcslws/gorilla-repl.git
@@ -32,34 +40,29 @@ Here's the work that's needed.
 
 ### Client-server ComportexViz
 
-Change ComportexViz to use a client-server model. The client will use a channel-based `get-in` API to retrieve model values.
+Change ComportexViz to use a client-server model. The server tells the client, at a high level, what to render. It's like a webserver.
 
 At the end of this work, ComportexViz will not access models directly, except possibly via pluggable servers.
 
 At the end of this work, there will be three pluggable servers.
 
-Terminology: "Comportex Simulator" is the traditional ComportexViz UI. "ComportexViz" is the visualizations that are shared between Comportex Simulator and "Comportex Notebook". Marcus put 3 seconds of thought into this naming.
+Terminology: "ComportexViz Runner" is the traditional ComportexViz UI. This is "ComportexViz Notebook". This will soon live inside of ComportexViz, and we'll just refer to "starting a runner" or "starting a notebook".
 
 More work is needed to connect Comportex Notebook to this server (see sections below) so the first task will be to get 1 and 2 working with traditional ComportexViz simulations.
 
 #### Server 1 - Browser-only
 
-This is simply Comportex Simulator behaving the same as today, but shuffled into this new architecture. Comportex will run in ClojureScript, as it does today.
+This is simply a ComportexViz runner behaving the same as today, but shuffled into this new architecture. Comportex will run in ClojureScript, as it does today.
 
 #### Server 2 - Comportex in the Cloud
 
-Comportex Notebook will use this, as will Comportex Simulator.
+Both the notebook and the runner will use this.
 
-ComportexViz is currently `.cljs`-only. This work will add `.clj` files. Consumers will call `(comportexviz/simulate model inputs)` to host a ComportexViz simulation webpage
+ComportexViz is currently `.cljs`-only. This work will add `.clj` files. Consumers will call `(comportexviz.server.launchpad/start-runner model inputs)` to host a runner webpage.
 
-The server stores a mutable lookup table of HTM models. It exposes an HTTP API for accessing / releasing models. For each model, the client will get two URLs, one for performing `get-in`s on the model and another for releasing the model.
+The client and server will communicate via a WebSocket. The overall philosophy is that client is in charge of rendering content, and the server is in charge of specifying it.
 
-When a browser navigates to the webpage, it signs up to receive tokens for the current and all future models, and the browser releases tokens as it finishes with models. Also, the server will release tokens when a web socket connection is broken.
-
-Comportex Simulator will support a few other HTTP APIs for commands like Run / Pause. It will also use a WebSocket to notify clients of changes. The notifications will be:
-
-   - a new model is available
-   - the Run / Pause state has changed
+When a browser navigates to the webpage, it signs up to receive steps of the simulation. As you click around the UI, it asks the server for what to render with the new selection. Also, the UI currently auto-increments the selection when new steps arrive, so many requests happen without user intervention.
 
 Open question: Is there a good way to specify and show the "world"?
 
@@ -67,58 +70,13 @@ Comportex Notebook will not use a WebSocket, and instead inserts the token into 
 
 In Comportex Simulator, the server does not store a vector of models. It just stores the current model and a lookup table, and the browser stores a vector of tokens.
 
-Here is some example incomplete untested code to help illustrate what this will look like.
-
-~~~clojure
-;; As new models are rendered, assoc them into this map with a unique key.
-(def lookups
-  (atom {:token1 {}
-		 :token2 {}
-		 :and-so :on}))
-
-(defroutes http-routes
-  (GET "/query" (-> (fn [req]
-					  (let [{:keys [token ks]} (:params req)]
-						(-> (get @lookups token)
-							(get-in ks))))
-					ring-params/assoc-query-params
-					ring-transit/wrap-transit-response))
-  (GET "/release" (-> (fn [req]
-						(let [{:keys [token]} (:params req)]
-						  (swap! lookups dissoc token)
-						  (ring-response/response {:status "ok"})))
-					  ring-params/assoc-query-params))
-
-  ;; Comportex Simulator only
-  (GET "/play" :TODO)
-  (GET "/pause" :TODO))
-
-;; Store sockets with their tokens so that we can release the tokens when a
-;; connection is broken.
-(def web-sockets
-  (atom {:socket1 #{:token1 :token2}
-		 :socket2 #{:token3 :token4}}))
-
-(def example-url "http://localhost:24601")
-
-(defn on-new-model [model]
-  (let [token :todo
-		message {:query-url (str example-url "/query?token=" token)
-				 :release-url (str example-url "/release?token=" token)}]
-	(swap! lookups assoc token model)
-
-	(doseq [s (keys web-sockets)]
-	  ;; TODO put the message on the web socket.
-	  (swap! web-sockets update s conj token))))
-~~~
-
 #### Server 3 - Static files
 
 Exported notebooks will use this. It's just a layer around static files.
 
-The browser code will make HTTP requests to download the needed files to satisfy `get-in` requests.
+The browser code will make HTTP requests to download the needed files to satisfy UI requests.
 
-The real challenge here is deciding how to export HTM models into multiple files such that they can be selectively downloaded.
+The real challenge here is deciding how to exporting all possible server outputs into multiple files such that they can be selectively downloaded.
 
 ### Gorilla REPL integration
 
@@ -138,9 +96,9 @@ Extension points needed: (more research needed)
 	- Release that browser's associated models.
 - Plugins to the "save" process, or add a true "export" command.
 	- Version 0.2: On save, convert all canvases to PNGs, perhaps Base64-encoded and inlined as a img data:image/png.
-	- Version 1: On save/export, export the models into static files.
+	- Version 1: On save/export, export all possible server responses into static files.
 
-As mentioned above, the first task is to get Comportex Simulator running on the server. In other words, I won't be thinking about Gorilla REPL for some time. There's a good chance I'll be smarter after building Client-server ComportexViz, and I wouldn't want to inconvenience @JonyEpsilon with the current, dumber me.
+As mentioned above, the first task is to get Comportex Runner running on the server. In other words, I won't be thinking about Gorilla REPL for some time. There's a good chance I'll be smarter after building Client-server ComportexViz, and I wouldn't want to inconvenience @JonyEpsilon with the current, dumber me.
 
 ### Export
 
